@@ -1,17 +1,13 @@
-const { DatabaseSync } = require('node:sqlite');
-const db = new DatabaseSync('memory');
+const Pool = require('pg').Pool
 
-db.exec(`
-	CREATE TABLE IF NOT EXISTS salasdeaula (
-	    salasdeaulaid INTEGER PRIMARY KEY,
-	    descricao TEXT NOT NULL,
-	    localizacao TEXT NOT NULL,
-	    capacidade INTEGER NOT NULL,
-	    removido INTEGER NOT NULL DEFAULT 0
-	);
-`);
+const pool = new Pool({
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASS,
+  port: process.env.DB_PORT,
+})
 
-module.exports = db;
-
-
-
+module.exports = {
+    query: (text, params) => pool.query(text, params),
+  };
